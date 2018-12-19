@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/integration"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:amqp="http://www.springframework.org/schema/integration/amqp"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xmlns:stream="http://www.springframework.org/schema/integration/stream"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+			http://www.springframework.org/schema/beans/spring-beans.xsd
+			http://www.springframework.org/schema/context
+			http://www.springframework.org/schema/context/spring-context.xsd
+			http://www.springframework.org/schema/integration
+			http://www.springframework.org/schema/integration/spring-integration.xsd
+ 			http://www.springframework.org/schema/integration/amqp 
+ 			http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
+     		http://www.springframework.org/schema/rabbit
+        	http://www.springframework.org/schema/rabbit/spring-rabbit.xsd
+			http://www.springframework.org/schema/integration/stream
+			http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
+
+	<channel id="txDataCh" />  
+	<amqp:inbound-channel-adapter id="mtsAmqpIbChAdapter" channel="txDataCh" queue-names="mtsDirectQueue" connection-factory="connectionFactory" />
+
+	<channel id="routeTxDataCh" />
+
+	<transformer id="transformTxData" ref="tranDataTransformer" input-channel="txDataCh" method="transformTranData" output-channel="routeTxDataCh" />
+	
+	<beans:bean id="tranDataTransformer" class="com.codebus.integration.TransactionDataTransformerImpl" />
+	
+	<channel id="usChannel" />
+	<channel id="mnChannel" />
+	<channel id="etChannel" />
+	<channel id="noCountryChannel" />
+	
+	<!-- *********** Custom MTS to Country Router ***************** -->
+    <router id="mtsToCountryRouter" input-channel="routeTxDataCh" default-output-channel="noCountryChannel" ref="mtsRouter" method="routeTransDataByCountry"/>
+    <beans:bean id="mtsRouter" class="com.codebus.integration.RouteTransDataRouter"/>
+    
+
+	<channel id="usBankOneChannel" />
+	<channel id="usBankTwoChannel" />
+	<channel id="mnBankOneChannel" />
+	<channel id="etBankOneChannel" />
+	<channel id="noBankChannel" />
+	
+	<!-- *********** Router To US Banks  ***************** -->
+    <router id="toUsBanksRouter" input-channel="usChannel" default-output-channel="noBankChannel" ref="mtsRouter" method="routeToUsBanks"/>    
+	
+	<amqp:outbound-channel-adapter id="mtsToUsBankOneAdapter" channel="usBankOneChannel"
+                               exchange-name="usBanksExchange"
+                               routing-key="us.bank.one.key"
+                               amqp-template="mtsRabbitTemplate"/>
+                               
+    <amqp:outbound-channel-adapter id="mtsToUsBankTwoAdapter" channel="usBankTwoChannel"
+                               exchange-name="usBanksExchange"
+                               routing-key="us.bank.two.key"
+                               amqp-template="mtsRabbitTemplate"/>   
+                                                   
+    <!-- *********** Router To Mongolian Banks ***************** -->
+    <router id="toMnBanksRouter" input-channel="mnChannel" default-output-channel="noBankChannel" ref="mtsRouter" method="routeToMongolianBanks"/>
+    
+    <amqp:outbound-channel-adapter id="mtsToMnBankOneAdapter" channel="mnBankOneChannel"
+                               exchange-name="mnBanksExchange"
+                               routing-key="mn.bank.one.key"
+                               amqp-template="mtsRabbitTemplate"/>
+                               
+    <!-- *********** Router To Ethiopian Banks ***************** -->
+    <router id="toEtBanksRouter" input-channel="etChannel" default-output-channel="noBankChannel" ref="mtsRouter" method="routeToEthiopianBanks"/>
+    
+    <amqp:outbound-channel-adapter id="mtsToEtBankOneAdapter" channel="etBankOneChannel"
+                               exchange-name="etBanksExchange"
+                               routing-key="et.bank.one.key"
+                               amqp-template="mtsRabbitTemplate"/>
+                               
+    <rabbit:template id="mtsRabbitTemplate" connection-factory="connectionFactory"
+                     reply-timeout="5000" />
+    	
+</beans:beans>

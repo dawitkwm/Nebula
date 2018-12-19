@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/rabbit
+        http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
+	
+	
+<!-- 	<rabbit:connection-factory id="connectionFactory" host="localhost" username="guest" password="guest"/>
+ -->	
+	<rabbit:connection-factory
+		id="connectionFactory" host="mosquito.rmq.cloudamqp.com"
+		virtual-host="zsunakgf" username="zsunakgf"
+		password="usEOro2i-kvGHmWB2TIdMdv75eyE2JCn" />
+	
+	<rabbit:admin connection-factory="connectionFactory" />
+
+	<!-- *********** MTS DIRECT EXCHANGE ***************** -->
+	<rabbit:queue name="mtsDirectQueue" durable="true" />
+
+	<rabbit:direct-exchange name="mtsDirectExchange" durable="true">
+		<rabbit:bindings>
+			<rabbit:binding queue="mtsDirectQueue" key="codebus.guivulga.key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+	
+	<!-- *********** Banks DIRECT EXCHANGEs ***************** -->
+	
+	<rabbit:queue name="usBankOneDirectQueue" durable="true" />
+	<rabbit:queue name="usBankTwoDirectQueue" durable="true" />
+	<rabbit:queue name="mnBankOneDirectQueue" durable="true" />
+	<rabbit:queue name="etBankOneDirectQueue" durable="true" />
+
+	<rabbit:direct-exchange name="usBanksExchange" durable="true">
+		<rabbit:bindings>
+			<rabbit:binding queue="usBankOneDirectQueue" key="us.bank.one.key"></rabbit:binding>
+			<rabbit:binding queue="usBankTwoDirectQueue" key="us.bank.two.key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+	<rabbit:direct-exchange name="mnBanksExchange" durable="true">
+		<rabbit:bindings>
+			<rabbit:binding queue="mnBankOneDirectQueue" key="mn.bank.one.key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+	<rabbit:direct-exchange name="etBanksExchange" durable="true">
+		<rabbit:bindings>
+			<rabbit:binding queue="etBankOneDirectQueue" key="et.bank.one.key"></rabbit:binding>
+		</rabbit:bindings>
+	</rabbit:direct-exchange>
+	
+</beans>
