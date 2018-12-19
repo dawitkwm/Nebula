@@ -11,9 +11,9 @@ public class RouteTransDataRouter {
 
 	// Routes based on destination country
 	@Router(inputChannel = "routeTxDataCh") 
-	public String routeTransDataByCountry(MtsTranDataEnvelope txData) {
+	public String routeTransDataByCountry(MtsTranDataEnvelope mtsTxData) {
 		String destination = null;
-		switch (txData.getRouteTranType()) {
+		switch (mtsTxData.getRouteTranType()) {
 		case USA:
 			destination = "usChannel";
 			break;
@@ -27,7 +27,7 @@ public class RouteTransDataRouter {
 			destination = "noCountryChannel";
 			break;
 		}
-		System.out.println("Money transfering out to: " + destination);
+//		System.out.println("Money transfering out to: " + destination);
 		return destination;
 
 	}
