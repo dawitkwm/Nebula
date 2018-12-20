@@ -5,12 +5,13 @@ import org.springframework.integration.annotation.Router;
 //import org.springframework.messaging.MessageChannel;
 
 import com.codebus.domain.MtsTranDataEnvelope;
+import com.codebus.domain.MtsTranDataEnvelope.TranDataBankType;
 
 @MessageEndpoint
 public class RouteTransDataRouter {
 
 	// Routes based on destination country
-	@Router(inputChannel = "routeTxDataCh") 
+	@Router(inputChannel = "routeTxDataCh")
 	public String routeTransDataByCountry(MtsTranDataEnvelope mtsTxData) {
 		String destination = null;
 		switch (mtsTxData.getRouteTranType()) {
@@ -27,7 +28,7 @@ public class RouteTransDataRouter {
 			destination = "noCountryChannel";
 			break;
 		}
-//		System.out.println("Money transfering out to: " + destination);
+//		System.out.println("Routing money transfer to: " + destination);
 		return destination;
 
 	}
@@ -35,9 +36,13 @@ public class RouteTransDataRouter {
 	// Routes to one of the US banks
 	@Router(inputChannel = "usChannel")
 	public String routeToUsBanks(MtsTranDataEnvelope txData) {
-//		String destination = null;
-
-		return "usBankOneChannel"; // "usBankOneChannel" or "usBankTwoChannel"
+		if (txData.getTranDataBankType().equals(TranDataBankType.USBANKONE)) {
+			return "usBankOneChannel";
+		} else if (txData.getTranDataBankType().equals(TranDataBankType.USBANKTWO)) {
+			return "usBankTwoChannel";
+		} else {
+			return "noBankChannel";
+		}
 
 	}
 
@@ -45,16 +50,23 @@ public class RouteTransDataRouter {
 	@Router(inputChannel = "mnChannel")
 	public String routeToMongolianBanks(MtsTranDataEnvelope txData) {
 
-		return "mnBankOneChannel";
+		if (txData.getTranDataBankType().equals(TranDataBankType.MONGOLIANBANKONE)) {
+			return "mnBankOneChannel";
+		} else {
+			return "noBankChannel";
+		}
 
 	}
 
 	// Routes to one of the Ethiopian banks
 	@Router(inputChannel = "etChannel")
 	public String routeToEthiopianBanks(MtsTranDataEnvelope txData) {
-
-		return "etBankOneChannel";
-
+		if (txData.getTranDataBankType().equals(TranDataBankType.ETHIOPIANBANKONE)) {
+			return "etBankOneChannel";
+		} else {
+			return "noBankChannel";
+		}
+		
 	}
 
 }

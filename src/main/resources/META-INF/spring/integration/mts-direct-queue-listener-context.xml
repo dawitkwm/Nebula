@@ -10,7 +10,7 @@
     
     <!-- **************** MTS Incoming TX Data Listener ************************* -->
 	<rabbit:listener-container connection-factory="connectionFactory">
-		<rabbit:listener ref="mtsQueueListener" method="listen" queue-names="mtsDirectQueue" />
+		<rabbit:listener ref="mtsQueueListener" method="listen" queue-names="mtsLoggingQueue" />
 	</rabbit:listener-container>
 
 	<bean id="mtsQueueListener" class="com.codebus.listener.TransactionDataListener" />

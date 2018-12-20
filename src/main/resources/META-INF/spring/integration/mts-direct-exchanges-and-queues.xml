@@ -8,8 +8,8 @@
         http://www.springframework.org/schema/rabbit/spring-rabbit.xsd">
 	
 	
-<!-- 	<rabbit:connection-factory id="connectionFactory" host="localhost" username="guest" password="guest"/>
- -->	
+<!--  	<rabbit:connection-factory id="connectionFactory" host="172.19.141.212" username="guest" password="guest"/>
+ --> 	
 	<rabbit:connection-factory
 		id="connectionFactory" host="mosquito.rmq.cloudamqp.com"
 		virtual-host="zsunakgf" username="zsunakgf"
@@ -18,13 +18,22 @@
 	<rabbit:admin connection-factory="connectionFactory" />
 
 	<!-- *********** MTS DIRECT EXCHANGE ***************** -->
-	<rabbit:queue name="mtsDirectQueue" durable="true" />
+	<!-- <rabbit:queue name="mtsDirectQueue" durable="true" />
 
 	<rabbit:direct-exchange name="mtsDirectExchange" durable="true">
 		<rabbit:bindings>
 			<rabbit:binding queue="mtsDirectQueue" key="codebus.guivulga.key"></rabbit:binding>
 		</rabbit:bindings>
-	</rabbit:direct-exchange>
+	</rabbit:direct-exchange> -->
+	
+	<rabbit:queue name="mtsToEAIQueue" durable="true" />
+	<rabbit:queue name="mtsLoggingQueue" durable="true" />
+	<rabbit:fanout-exchange name="mtsFanoutExchange" durable="true">
+        <rabbit:bindings>
+            <rabbit:binding queue="mtsToEAIQueue"/>
+            <rabbit:binding queue="mtsLoggingQueue"/>
+        </rabbit:bindings>
+    </rabbit:fanout-exchange>
 	
 	
 	<!-- *********** Banks DIRECT EXCHANGEs ***************** -->

@@ -19,7 +19,7 @@
 			http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
 
 	<channel id="txDataCh" />  
-	<amqp:inbound-channel-adapter id="mtsAmqpIbChAdapter" channel="txDataCh" queue-names="mtsDirectQueue" connection-factory="connectionFactory" />
+	<amqp:inbound-channel-adapter id="mtsAmqpIbChAdapter" channel="txDataCh" queue-names="mtsToEAIQueue" connection-factory="connectionFactory" />
 
 	<channel id="routeTxDataCh" />
 
