@@ -20,8 +20,8 @@ public class TransactionDataTransformerImpl implements TransactionDataTransforme
 		MtsTranDataEnvelope countryRouteTranData = null;
 		String countryCode = tranData.getToIBAN().substring(0, 2);
 		String bankCode = tranData.getToIBAN().substring(3, 10);
-		System.out.println("Country code: " + countryCode);
-		System.out.println("Bank code: " + bankCode);
+//		System.out.println("Country code: " + countryCode);
+//		System.out.println("Bank code: " + bankCode);
  		if(countryCode.equals("us") && bankCode.equals("bankone")) {
 				countryRouteTranData = new MtsTranDataEnvelope(tranData, RouteTranDataType.USA, TranDataBankType.USBANKONE);
 

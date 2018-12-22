@@ -32,19 +32,17 @@
 	<channel id="etChannel" />
 	<channel id="noCountryChannel" />
 	
-	<!-- *********** Custom MTS to Country Router ***************** -->
-    <router id="mtsToCountryRouter" input-channel="routeTxDataCh" default-output-channel="noCountryChannel" ref="mtsRouter" method="routeTransDataByCountry"/>
-    <beans:bean id="mtsRouter" class="com.codebus.integration.RouteTransDataRouter"/>
+	<!-- *********** Router to Countries  ***************** -->
+    <router id="mtsToCountryRouter" input-channel="routeTxDataCh" default-output-channel="noCountryChannel" ref="countryRouter" method="routeTransDataByCountry"/>
+    <beans:bean id="countryRouter" class="com.codebus.integration.CountryRouter"/>
     
-
+	<channel id="noBankChannel" />
+	<!-- *********** Router To US Banks  ***************** -->
 	<channel id="usBankOneChannel" />
 	<channel id="usBankTwoChannel" />
-	<channel id="mnBankOneChannel" />
-	<channel id="etBankOneChannel" />
-	<channel id="noBankChannel" />
 	
-	<!-- *********** Router To US Banks  ***************** -->
-    <router id="toUsBanksRouter" input-channel="usChannel" default-output-channel="noBankChannel" ref="mtsRouter" method="routeToUsBanks"/>    
+    <router id="toUsBanksRouter" input-channel="usChannel" default-output-channel="noBankChannel" ref="usBanksRouter" method="routeToUsBanks"/>
+    <beans:bean id="usBanksRouter" class="com.codebus.integration.USBanksRouter"/>    
 	
 	<amqp:outbound-channel-adapter id="mtsToUsBankOneAdapter" channel="usBankOneChannel"
                                exchange-name="usBanksExchange"
@@ -57,7 +55,10 @@
                                amqp-template="mtsRabbitTemplate"/>   
                                                    
     <!-- *********** Router To Mongolian Banks ***************** -->
-    <router id="toMnBanksRouter" input-channel="mnChannel" default-output-channel="noBankChannel" ref="mtsRouter" method="routeToMongolianBanks"/>
+    <channel id="mnBankOneChannel" />
+    
+    <router id="toMnBanksRouter" input-channel="mnChannel" default-output-channel="noBankChannel" ref="mnBanksRouter" method="routeToMongolianBanks"/>
+    <beans:bean id="mnBanksRouter" class="com.codebus.integration.MongolianBanksRouter"/>
     
     <amqp:outbound-channel-adapter id="mtsToMnBankOneAdapter" channel="mnBankOneChannel"
                                exchange-name="mnBanksExchange"
@@ -65,7 +66,10 @@
                                amqp-template="mtsRabbitTemplate"/>
                                
     <!-- *********** Router To Ethiopian Banks ***************** -->
-    <router id="toEtBanksRouter" input-channel="etChannel" default-output-channel="noBankChannel" ref="mtsRouter" method="routeToEthiopianBanks"/>
+    <channel id="etBankOneChannel" />
+    
+    <router id="toEtBanksRouter" input-channel="etChannel" default-output-channel="noBankChannel" ref="etBanksRouter" method="routeToEthiopianBanks"/>
+    <beans:bean id="etBanksRouter" class="com.codebus.integration.EthiopianBanksRouter"/>
     
     <amqp:outbound-channel-adapter id="mtsToEtBankOneAdapter" channel="etBankOneChannel"
                                exchange-name="etBanksExchange"
@@ -74,5 +78,4 @@
                                
     <rabbit:template id="mtsRabbitTemplate" connection-factory="connectionFactory"
                      reply-timeout="5000" />
-    	
 </beans:beans>

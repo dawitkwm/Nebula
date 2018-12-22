@@ -17,14 +17,7 @@
 	
 	<rabbit:admin connection-factory="connectionFactory" />
 
-	<!-- *********** MTS DIRECT EXCHANGE ***************** -->
-	<!-- <rabbit:queue name="mtsDirectQueue" durable="true" />
-
-	<rabbit:direct-exchange name="mtsDirectExchange" durable="true">
-		<rabbit:bindings>
-			<rabbit:binding queue="mtsDirectQueue" key="codebus.guivulga.key"></rabbit:binding>
-		</rabbit:bindings>
-	</rabbit:direct-exchange> -->
+	<!-- *********** MTS Fanout EXCHANGE ***************** -->
 	
 	<rabbit:queue name="mtsToEAIQueue" durable="true" />
 	<rabbit:queue name="mtsLoggingQueue" durable="true" />
@@ -36,13 +29,9 @@
     </rabbit:fanout-exchange>
 	
 	
-	<!-- *********** Banks DIRECT EXCHANGEs ***************** -->
-	
+	<!-- *********** US Banks DIRECT EXCHANGE ***************** -->
 	<rabbit:queue name="usBankOneDirectQueue" durable="true" />
 	<rabbit:queue name="usBankTwoDirectQueue" durable="true" />
-	<rabbit:queue name="mnBankOneDirectQueue" durable="true" />
-	<rabbit:queue name="etBankOneDirectQueue" durable="true" />
-
 	<rabbit:direct-exchange name="usBanksExchange" durable="true">
 		<rabbit:bindings>
 			<rabbit:binding queue="usBankOneDirectQueue" key="us.bank.one.key"></rabbit:binding>
@@ -50,12 +39,16 @@
 		</rabbit:bindings>
 	</rabbit:direct-exchange>
 	
+	<!-- *********** Mongolian Banks DIRECT EXCHANGE ***************** -->
+	<rabbit:queue name="mnBankOneDirectQueue" durable="true" />
 	<rabbit:direct-exchange name="mnBanksExchange" durable="true">
 		<rabbit:bindings>
 			<rabbit:binding queue="mnBankOneDirectQueue" key="mn.bank.one.key"></rabbit:binding>
 		</rabbit:bindings>
 	</rabbit:direct-exchange>
 	
+	<!-- *********** Ethiopian Banks DIRECT EXCHANGE ***************** -->
+	<rabbit:queue name="etBankOneDirectQueue" durable="true" />
 	<rabbit:direct-exchange name="etBanksExchange" durable="true">
 		<rabbit:bindings>
 			<rabbit:binding queue="etBankOneDirectQueue" key="et.bank.one.key"></rabbit:binding>
